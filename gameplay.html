@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>gameplay</title>
+  <meta name="generator" content="Google Web Designer 8.0.1.0401">
+  <style type="text/css" id="gwd-text-style">
+    p {
+      margin: 0px;
+    }
+    h1 {
+      padding: 10px;
+      margin-top: 0px;
+      background-color: black;
+      color: orange;
+      font-size: 90px;
+      font-family: Helvetica;
+      position: relative;
+      text-align: center;
+    }
+    h2 {
+      margin: 0px;
+    }
+    h3 {
+      margin: 0px;
+    }
+  </style>
+  <style type="text/css">
+    body {
+      background-color: black;
+    }
+    .main {
+      background-color: white;
+      margin-left: 10%;
+      margin-right: 10%;
+      padding: 15px;
+      text-align: center;
+    }
+    p {
+      padding: 10px;
+    }
+    #eval {
+      font-size: 50px;
+      text-align: center;
+      color: red;
+      padding: 20px;
+    }
+    table {
+      margin-left: auto;
+      margin-right: auto;
+      border-spacing: 10px;
+    }
+    .drop {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      border: 1px solid rgb(170, 170, 170);
+    }
+    .item {
+      width: 80px;
+      height: 60px;
+      padding: 10px;
+      font-size: 20px;
+      text-align: center;
+      border: 1px solid rgb(170, 170, 170);
+      background-color: yellow;
+    }
+    .answerKey {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body class="htmlNoPages">
+  <h1>
+    PROGRESSION
+  </h1>
+<div class="main">
+  <h2>
+    Category: <span id="category"></span>
+  </h2>
+  <h3>
+    Progression: Order by <span id="orderBy">x</span>, from <span id="orderFrom">y to z</span>
+  </h3>
+  <div id="eval"></div>
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item" id="item1" draggable="true" ondragstart="drag(event)">A</div>
+        </td>
+        <td>
+          <div class="item" id="item2" draggable="true" ondragstart="drag(event)">B</div>
+        </td>
+        <td>
+          <div class="item" id="item3" draggable="true" ondragstart="drag(event)">C</div>
+        </td>
+        <td>
+          <div class="item" id="item4" draggable="true" ondragstart="drag(event)">D</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    (Click and drag to positions below)
+  </p>
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <div class="drop" id="drop1" ondragover="allowDrop(event);" ondrop="drop(event);">#1</div>
+        </td>
+        <td>
+          <div class="drop" id="drop2" ondragover="allowDrop(event);" ondrop="drop(event);">#2</div>
+        </td>
+        <td>
+          <div class="drop" id="drop3" ondragover="allowDrop(event);" ondrop="drop(event);">#3</div>
+        </td>
+        <td>
+          <div class="drop" id="drop4" ondragover="allowDrop(event);" ondrop="drop(event);">#4</div>
+        </td>
+      </tr>
+      <tr>
+        <td class="answerKey">???</td>
+        <td class="answerKey">???</td>
+        <td class="answerKey">???</td>
+        <td class="answerKey">???</td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="buttons">
+  <button id="submit">
+    Submit
+  </button>
+  </div>
+  <script>
+    //define categories
+
+    var us_presidents = [
+      ["George Washington", "1789-1797"],
+      ["John Adams", ""],
+      ["Thomas Jefferson", ""],
+      ["James Madison", ""],
+      ["James Monroe", ""],
+      ["John Quincy Adams", ""],
+      ["Andrew Jackson", ""],
+      ["Martin Van Buren", ""],
+      ["William Henry Harrison", ""],
+      ["John Tyler", ""],
+      ["James Polk", ""],
+      ["Zachary Taylor", ""],
+      ["Millard Fillmore", ""],
+      ["Franklin Pierce", ""],
+      ["James Buchanan", ""],
+      ["Abraham Lincoln", "1861-1865"],
+      ["Andrew Johnson", ""],
+      ["Franklin D. Roosevelt", "1933-1945"],
+      ["Barack Obama", "2009-2017"]
+    ];
+
+    var planets = [
+      ["Mercury", "1st"],
+      ["Venus", "2nd"],
+      ["Earth", "3rd"],
+      ["Mars", "4th"],
+      ["Jupiter", "5th"],
+      ["Saturn", "6th"],
+      ["Uranus", "7th"],
+      ["Neptune", "8th"]
+    ];
+
+    var china_dynasties = [
+      ["Zhou Dynasty", "1122-221 BCE"],
+      ["Han Dynasty", "206-581 CE"],
+      ["Tang Dynasty", "618-907 CE"],
+      ["Ming Dynasty", "1368-1677 CE"]
+    ];
+
+var gamePlay = function() {
+    //define category attributes --> [items, formal name, orderBy, orderFrom]
+    var categories = [
+      [us_presidents, "U.S. Presidents", "dates in office", "earliest to most recent"],
+      [planets, "Planets in the Solar System", "distance from the Sun", "nearest to farthest"],
+      [china_dynasties, "Chinese Dynasties", "date", "earliest to most recent"]
+    ];
+
+    //pick a category
+    var catNum = Math.floor(Math.random() * categories.length);
+    var catActive = categories[catNum][0];
+
+    var catName = document.getElementById("category");
+    catName.textContent = categories[catNum][1];
+
+    var orderBy = document.getElementById("orderBy");
+    orderBy.textContent = categories[catNum][2];
+
+    var orderFrom = document.getElementById("orderFrom");
+    orderFrom.textContent = categories[catNum][3];
+
+    //pick four items from the category to make an item set        
+    var len = catActive.length;
+
+    var index4 = Math.floor(Math.random() * (len - 3)) + 3;
+    var index3 = Math.floor(Math.random() * (index4 - 2)) + 2;
+    var index2 = Math.floor(Math.random() * (index3 - 1)) + 1;
+    var index1 = Math.floor(Math.random() * (index2 - 0)) + 0;
+    var itemSet = [catActive[index1], catActive[index2], catActive[index3], catActive[index4]]; //4 selected items
+
+    //answer key
+    var answers = [
+      itemSet[0],
+      itemSet[1],
+      itemSet[2],
+      itemSet[3]
+    ];
+
+    //shuffle the order of the items in the selected category
+    var shuffle = function(array) {
+      var ctr = array.length,
+        temp, index;
+      while (ctr > 0) {
+        index = Math.floor(Math.random() * ctr); // pick one
+        ctr--; // reduce the counter variable
+        temp = array[ctr]; // remember the last item in the original array
+        array[ctr] = array[index]; // swap the last item in the original array for the randomly selected item
+        array[index] = temp;
+      }
+      return array;
+    }
+ 
+    var tempItemSet = [0, 1, 2, 3];
+    var itemSetShuffled = shuffle(tempItemSet); 
+
+    //display the items in shuffled order
+    var item1 = document.getElementById("item1");
+    item1.innerHTML = itemSet[itemSetShuffled[0]][0];
+
+    var item2 = document.getElementById("item2");
+    item2.innerHTML = itemSet[itemSetShuffled[1]][0];
+    
+    var item3 = document.getElementById("item3");
+    item3.innerHTML = itemSet[itemSetShuffled[2]][0];
+    
+    var item4 = document.getElementById("item4");
+    item4.innerHTML = itemSet[itemSetShuffled[3]][0];
+    
+    //drag and drop
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      ev.target.appendChild(document.getElementById(data));
+    }
+
+    //what happens when you click the Submit button
+    var submitButton = document.getElementById("submit");
+
+    var onSubmitClick = function() {
+
+      //SUBMIT button goes away
+      submitButton.style.display = "none";
+      
+      //display NEXT button
+      var nextButton = document.createElement("button");
+      nextButton.textContent = "Next";
+      nextButton.id = "next;"
+      document.getElementById("buttons").appendChild(nextButton);
+      
+      //evaluate responses and display :-) or :-(
+      var evaluate = document.getElementById("eval");
+      var ans1 = document.getElementById("drop1").textContent;
+      var ans2 = document.getElementById("drop2").textContent;
+      var ans3 = document.getElementById("drop3").textContent;
+      var ans4 = document.getElementById("drop4").textContent;
+      if (ans1 === "#1" + answers[0][0] && ans2 === "#2" + answers[1][0] && ans3 === "#3" + answers[2][0] && ans4 === "#4" + answers[3][0]) {
+        evaluate.textContent = "EXCELLENT!";
+      } else {
+        evaluate.textContent = "NOPE!";
+      }
+
+      //display answer key
+      var answerKey = document.getElementsByClassName("answerKey");
+      for (var i = 0; answerKey.length; i++) {
+        answerKey[i].innerHTML = answers[i][0] + ", " + answers[i][1];
+      };
+    };
+    submitButton.addEventListener("click", onSubmitClick);
+};
+    
+    gamePlay();
+
+  //what happens when you click the Next button
+  var nextButton = buttons.getElementById("next");
+  nextButton.addEventListener("click", gamePlay);
+  
+  /*
+    Adam's priorities:
+X    1. grader 
+X    2. "submit" button goes away when clicked
+    3. "next" button loops back to beginning
+    4. linkage to google sheets
+    5. share it with dad
+    6. styling
+    
+    Dad's priorities:
+    1. define "game"
+    2. content for home page
+    3. think through which categories can be built out
+    4. think through which categories are dated or will limit the audience
+    5. think through scoring
+  */
+  
+  </script>
+  </div>
+  </body>
+
+</html>
